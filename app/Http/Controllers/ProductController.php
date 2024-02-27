@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Models\Product;
 
 class ProductController extends Controller
 {
+    
     public static $products = [
         ["id"=>"1", "name"=>"TV", "description"=>"Best TV"],
         ["id"=>"2", "name"=>"iPhone", "description"=>"Best iPhone"],
@@ -19,14 +21,14 @@ class ProductController extends Controller
         $viewData = [];
         $viewData["title"] = "Products - Online Store";
         $viewData["subtitle"] =  "List of products";
-        $viewData["products"] = ProductController::$products;
+        $viewData["products"] = Product::all();
         return view('product.index')->with("viewData", $viewData);
     }
 
     public function show(string $id) : View
     {
         $viewData = [];
-        $product = ProductController::$products[$id-1];
+        $product = Product::findOrFail($id);
         $viewData["title"] = $product["name"]." - Online Store";
         $viewData["subtitle"] =  $product["name"]." - Product information";
         $viewData["product"] = $product;
@@ -47,7 +49,9 @@ class ProductController extends Controller
             "price" => "required"
         ]);
         dd($request->all());
-        //here will be the code to call the model and save it to the database
+        //here will go the code to call the model and save it to the database
+        Product::create($request->only(["name","price"]));
+        return back();
     }
 }
 
